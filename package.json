@@ -4,6 +4,7 @@
   "description": "Research about a person",
   "main": "index.js",
   "scripts": {
+    "sonar": "sonar-scanner",
     "start": "nodemon index.jsn",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

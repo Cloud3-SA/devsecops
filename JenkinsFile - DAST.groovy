@@ -1,35 +1,42 @@
 pipeline {
     agent any
 
-    environment {
-        SONARQUBE_SERVER = 'http://IP-Host:9000'
-        PROJECT_NAME = 'Unimed'
-        PROJECT_VERSION = '1.0.0'
-    }
+    stages {
 
-        stage('DAST with OWASP ZAP') {
+        stage('DAST') {
             steps {
                 script {
-                    // Set the target URL, API key and ZAP container host
-                    def targetUrl = 'http://IP-Host:9090'
-                    def zapApiKey = 'TesteDAST'
-                    def zapHost = 'http://IP-Host:8090'
+                    ZAP_API_KEY = "TesteDAST"
+                    ZAP_BASE_URL = "http://IP-HOST:8090"
+                    TARGET_URL = "http://IP-HOST:3000"
 
-                    // Start the ZAP scan
-                    sh "curl -s -X POST '${zapHost}/JSON/ascan/action/scan/?apikey=${zapApiKey}&url=${targetUrl}&recurse=true'"
+                    // Start a new ZAP session
+                    sh "curl -s '${ZAP_BASE_URL}/JSON/core/action/newSession/?apikey=${ZAP_API_KEY}&name=session'"
 
-                    // Check the status of the ZAP scan
-                    def scanStatus = "0"
-                    while (scanStatus < "100") {
+                    // Access the target application
+                    sh "curl -s '${ZAP_BASE_URL}/JSON/core/action/accessUrl/?apikey=${ZAP_API_KEY}&url=${TARGET_URL}&followRedirects=true'"
+
+                    // Spider the application
+                    sh "curl -s '${ZAP_BASE_URL}/JSON/spider/action/scan/?apikey=${ZAP_API_KEY}&url=${TARGET_URL}'"
+
+                    // Run the active scan
+                    sh "curl -s '${ZAP_BASE_URL}/JSON/ascan/action/scan/?apikey=${ZAP_API_KEY}&url=${TARGET_URL}&recurse=true&inScopeOnly=&scanPolicyName=&method=&postData=&contextId='"
+
+                    // Monitor the active scan progress
+                    while (true) {
+                        SCAN_PROGRESS = sh(script: "curl -s '${ZAP_BASE_URL}/JSON/ascan/view/status/?apikey=${ZAP_API_KEY}'", returnStdout: true).trim()
+                        echo "ZAP Scan progress: ${SCAN_PROGRESS}%"
+
+                        if (SCAN_PROGRESS >= "100") {
+                            break
+                        }
                         sleep 30
-                        scanStatus = sh(script: "curl -s '${zapHost}/JSON/ascan/view/status/?apikey=${zapApiKey}'", returnStdout: true).trim()
-                        println("ZAP Scan progress: ${scanStatus}%")
                     }
 
-                    // Generate a report of the ZAP scan results
-                    sh "curl -s '${zapHost}/OTHER/core/other/htmlreport/?apikey=${zapApiKey}' -o zap-report.html"
+                    // Generate the report and save it to a file
+                    sh "curl -s '${ZAP_BASE_URL}/OTHER/core/other/htmlreport/?apikey=${ZAP_API_KEY}' > zap_report.html"
                 }
-            }
-        }
+            }  
+        }  
     }
-}
+}        

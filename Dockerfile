@@ -1,14 +1,20 @@
-# Use a imagem oficial do OpenJDK como base
-FROM openjdk:11-jre-slim
+# Utilize uma imagem base do Node.js (Alpine para manter pequena)
+FROM node:14-alpine
 
-# Defina o diretório de trabalho
-WORKDIR /app
+# Defina a pasta de trabalho
+WORKDIR /usr/src/app
 
-# Copie o arquivo JAR gerado pelo Maven
-COPY target/my-app-1.0-SNAPSHOT.jar /app/my-app.jar
+# Copie o arquivo package.json e package-lock.json (se disponível)
+COPY package*.json ./
 
-# Expõe a porta em que a aplicação será executada
-EXPOSE 9090
+# Instale as dependências do projeto
+RUN npm ci
 
-# Define o comando padrão para executar a aplicação
-CMD ["java", "-jar", "my-app.jar"]
+# Copie os arquivos do projeto para a pasta de trabalho
+COPY . .
+
+# Exponha a porta em que sua aplicação irá rodar, se aplicável
+EXPOSE 3000
+
+# Inicie a aplicação com o comando específico
+CMD ["npm", "start"]

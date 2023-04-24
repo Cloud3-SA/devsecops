@@ -1,29 +1,17 @@
-# SonarQube Basic Maven Example
+# simple-nodejs-app
 
-This simple Maven project is importing JaCoCo's coverage report.
-<br /><br />
+Simple-nodejs-app is a simple web application created using [Node.js](https://github.com/nodejs/node). It uses [MediaWiki - Wikipedia's Search API](https://www.mediawiki.org/wiki/API:Opensearch) to search for anything entered by the user and parses the result in a JSON format. The infobox of the Wikipedia page is parsed using [wiki-infobox-parser](https://github.com/0x333333/wiki-infobox-parser).
+
+## Download and Installation
+
+- Clone the repo ```https://github.com/rat9615/simple-nodejs-app```
+- [Fork, Clone or Download on Github](https://github.com/rat9615/simple-nodejs-app)
 
 ## Usage
 
-* Download SonarQube which matches with your Java version from [here](https://www.sonarqube.org/downloads/)
+- After installation, run ```npm install``` to download and install all the required dependencies.
+- Run ```npm start``` to run the web application.
 
-* Start the SonarQube server\
-**For Windows**\
-`YOUR_DIR_PATH\sonarqube\bin\windows-x86-xx\StartSonar.bat`\
-**For other operating systems like Linux/Ubuntu**\
-`YOUR_DIR_PATH/sonarqube/bin/[OS]/sonar.sh console`
+## Live Preview
 
-* Once the SonarQube Server is up and running then you can visit the SonarQube Dashboard at http://localhost:9000/dashboard/ \
-Default System administrator credentials are **admin/admin**
-
-* Build the project, execute all the tests and analyze the project with SonarQube Scanner for Maven\
-**`mvn clean verify sonar:sonar`**\
-or\
-**`mvn clean install sonar:sonar`**
-        
-* Click on the project name to see the code quality inspection
-<br />
-
-## Documentation
-
-[SonarScanner for Maven](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-maven/)
+To view a live preview of this application, click [here](https://desolate-coast-53201.herokuapp.com/)
